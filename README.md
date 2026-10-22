@@ -1,0 +1,2 @@
+# Notes
+bash scrip file
