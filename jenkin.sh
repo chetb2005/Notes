@@ -20,4 +20,4 @@ sudo apt update
 
 sudo apt install jenkins -y
 
-systemctl isactive jenkins
+systemctl is-active jenkins
