@@ -1,0 +1,14 @@
+events {}
+
+http {
+        server{
+                listen 80;
+                location /web1/ {
+                        proxy_pass http://web1:80/;
+                }
+
+                location /web2/ {
+                        proxy_pass http://web2:80/;
+                }
+        }
+}
