@@ -1,0 +1,28 @@
+Query							Description
+################################################################
+up							Whether monitoring targets are reachable
+node_cpu_seconds_total					CPU time metrics
+node_memory_MemAvailable_bytes				Available RAM
+node_filesystem_avail_bytes				Available filesystem space
+rate(node_network_receive_bytes_total[5m])		Network receive rate
+
+
+
+
+
+Install .iso (Debian)
+
+RAM - 8GB
+
+Attach 4/5 disks with trueNAS [50GB each]
+
+Once installation is done.
+
+Keep the network adapter HostOnly / Bridge
+
+You will be able to access it through the WEB interface.
+
+Run the service of FTP/SMB or any other
+
+Inside the TrueNAS
+Create a pool of the storage and use it from the Windows.

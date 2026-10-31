@@ -1,0 +1,151 @@
+#k8s
+
+3 EC2 instances provisioned on AWS [All traffic allowed]
+
+Name		Public_IP	Private_IP
+k8s-master	3.25.124.106	172.31.39.41
+k8s-node1	3.26.77.167	172.31.43.8
+k8s-node2	3.107.45.176	172.31.43.105	
+
+
+Change the hostnames to k8s-master, k8s-node1, k8s-node2 respectively
+
+======================================================================
+Basic Utilities
+===================
+sudo apt install curl wget vim net-tools iproute2 -y
+
+# Ensure no Swapping
+sudo swapoff -a
+free -h
+##############
+
+k8s-master
+++++++
+curl -sfL https://get.k3s.io | sudo sh -
+
+# to verify service is running
+sudo systemctl status k3s
+
+# to verify k8s
+sudo k3s kubectl get nodes
+
+# to view the token from k3s
+sudo cat /var/lib/rancher/k3s/server/node-token
+
+Copy the token and it will be required while installing k3s on worker nodes
+
+
+
+=========================================================================
+WORKER NODES
+=========================================================================
+node-1   & node -2 
+-------
+
+curl -sfL https://get.k3s.io | sudo \
+K3S_URL=https://172.31.39.41:6443 \
+K3S_TOKEN='K1073ddac2f7b4f0d4dea0d0733756287c867322fa9ce9cda92f40a23fbd9190890::server:d5856856e4c01ef1587e71a40d388dd6' \
+sh -
+
+###########
+Master
+==============
+k3s kubectl get nodes
+
+(it should show all three nodes ready)
+(1 control + 2 worker)
+
+
+
+### To deploy nginx
+mkdir project && cd project
+
+nano project-deployment.yaml
+
+###############################
+
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: project-deployment
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: custom
+
+  template:
+    metadata:
+      labels:
+        app: custom
+
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k8s-node2
+
+      containers:
+        - name: itiss
+          image: nasawebtech/itiss:latest
+          ports:
+            - containerPort: 80
+##################################################################
+
+
+
+Deploy
+
+sudo k3s kubectl apply -f project-deployment.yaml
+
+################################################################
+Create the SErvice - so that you can access it from outside the cluster
+
+nano project-service.yaml
+
+#################
+
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: project-service
+
+spec:
+  type: NodePort
+
+  selector:
+    app: custom
+
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30080
+      protocol: TCP
+############
+
+
+Apply the service
+
+sudo k3s kubectl apply -f project-service.yaml
+
+
+# Access the site
+
+
+http://3.107.45.176:30080
+
+
+
+# change the replicas
+
+sudo k3s kubectl scale deployment project-deployment --replicas=2
+
+# Remove Service
+sudo k3s kubectl delete -f project-service.yaml
+
+#Remove deployment
+sudo k3s kubectl delete -f project-deployment.yaml
+
