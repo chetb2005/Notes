@@ -1,0 +1,19 @@
+All:
+#!/bin/bash
+sudo hostnamectl set-hostname 
+sudo apt update
+sudo apt install docker.io -y
+sudo usermod admin -aG docker 
+
+
+docker swarm init --advertise-addr <private-ip>
+past the link in all node
+
+docker node ls
+docker service create --name myweb -p 80:80 chetanit/itiss
+docker service scale myweb=3
+docker service ps myweb
+
+
+node:
+docker ps
