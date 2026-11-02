@@ -1,0 +1,2 @@
+docker run -d --name myproje -p 8000:80 httpd
+docker cp index.html myproje:/usr/local/apache2/htdocs/index.html
