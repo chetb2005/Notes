@@ -1,0 +1,50 @@
+sudo update
+
+Both machine nano /etc/hosts :     <ip-add> name of other machine
+ping each other with name 
+
+
+pserver:
+ install puppetserver
+ nano /etc/puppet/puppet.conf
+	cli:
+		[main]
+		server = pserver
+ systemctl start puppetserver
+ systemctl enable 
+ sudo puppet config print server
+
+pupppet-Client:
+ install puppet-agent
+ nano /etc/puppet/puppet.cong
+     cli:
+	 [main]
+	 server = pserver
+ sydtemctl start puppet
+ sudo puppet config print server
+
+ sudo puppet agent -t
+
+
+pserver :
+
+   sudo puppetserver ca list
+   sudo puppetserver ca sign --certname <name of machine eg. pclient>
+
+pclient :
+ sudo puppet agent -t
+
+pserver :
+  sudo mkdir -p /etc/puppet/code/environments/production/manifests
+  sudo cd /etc/puppet/code/environments/production/manifests
+  sudo nano site.pp
+     cli:
+        node 'pcient'{
+	      package {'tree':
+                      ensure => installed
+        }
+        }
+
+pclient:
+
+  sudo puppet agent -t
