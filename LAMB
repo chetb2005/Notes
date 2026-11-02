@@ -1,0 +1,25 @@
+
+import { readFileSync } from "node:fs";
+
+export const handler = async (event) => {
+    try {
+        const html = readFileSync(
+            new URL("./index.html", import.meta.url),
+            "utf8"
+        );
+
+        return {
+            statusCode: 200,
+            headers: {
+                "Content-Type": "text/html; charset=utf-8"
+            },
+            body: html
+        };
+
+    } catch (error) {
+        return {
+            statusCode: 500,
+            body: "Error loading website: " + error.message
+        };
+    }
+};
